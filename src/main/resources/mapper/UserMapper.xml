@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.demo.dao.UserMapper">
+    <resultMap id="beanTodb" type="com.example.demo.pojo.User">
+        <id property="uid" column="uid"/>
+        <result property="uuid" column="uuid"/>
+    </resultMap>
+
+    <insert id="addOne" parameterType="com.example.demo.pojo.User">
+        <selectKey keyProperty="uuid" resultType="String" order="BEFORE">
+            select UUID();
+        </selectKey>
+        insert into `user`(uuid,username,logname,password,age,address)
+        value(#{uuid},#{username},#{logname},#{password},#{age},#{address});
+    </insert>
+
+    <select id="findLike" parameterType="String" resultType="com.example.demo.pojo.User">
+        select * from `user` where username like '%${value}%';
+    </select>
+
+    <update id="modifyOne" parameterType="com.example.demo.pojo.User">
+        update `user`
+        <set >
+            <if test="username != null" >
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="logname != null" >
+                logname = #{logname,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null" >
+                age = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="address != null" >
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where uid = #{uid,jdbcType=INTEGER}
+    </update>
+</mapper>
